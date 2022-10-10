@@ -14,11 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        $shops = \App\Models\Shop::factory(20)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        \App\Models\User::factory(20)->create()->each(function ($user) use ($shops) {
+            $user->cards()->saveMany(\App\Models\Card::factory(3)->make());
+
+            $user->cards->each(function ($card) use ($shops) {
+                $card->payments()->saveMany(\App\Models\Payment::factory(10)->make([
+                    'shop_id' => $shops->random()->id,
+                ]));
+            });
+        });
     }
 }

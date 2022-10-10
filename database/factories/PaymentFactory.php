@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Payment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -25,5 +26,17 @@ class PaymentFactory extends Factory
             'amount' => fake()->randomFloat(2, 1, 1000),
             'tax' => fake()->randomFloat(2, 1, 10),
         ];
+    }
+    
+    /**
+     * Configure the model factory.
+     *
+     * @return $this
+     */
+    public function configure()
+    {
+        return $this->afterMaking(function (Payment $payment) {
+            $payment->shop_id = $payment->method === 'atm' ? null : $payment->shop_id;
+        });
     }
 }
